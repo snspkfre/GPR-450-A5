@@ -26,6 +26,7 @@
 #ifdef _WIN32
 #include <io.h>
 #include <stdio.h>
+#include <inttypes.h>
 #include <Windows.h>
 
 
@@ -425,9 +426,9 @@ cat_impl bool cat_console_draw_test_patch(void)
             bg = (cat_console_color_t)x;
             cat_console_set_color(fg, bg);
             cat_console_set_pos(x * 2, y);
-            printf("%x", (int32_t)x);
+            printf("%"PRIx32, (int32_t)x);
             cat_console_set_pos_color(x * 2 + 1, y, fg, bg);
-            printf("%x", (int32_t)y);
+            printf("%"PRIx32, (int32_t)y);
         }
     }
     cat_console_get_pos(&x, &y);
@@ -435,7 +436,7 @@ cat_impl bool cat_console_draw_test_patch(void)
     cat_console_get_pos_color(&x, &y, &fg, &bg);
     cat_console_get_size(&w, &h);
     cat_console_reset_color();
-    printf("XY=(%d, %d) WH=(%d, %d) \n", (int32_t)x, (int32_t)y, (int32_t)w, (int32_t)h);
+    printf("XY=(%"PRIi32", %"PRIi32") WH=(%"PRIi32", %"PRIi32") \n", (int32_t)x, (int32_t)y, (int32_t)w, (int32_t)h);
     return true;
 }
 

@@ -41,5 +41,52 @@
 cat_implementation_begin;
 
 
+cat_impl cat_time_rate_t cat_platform_time_rate(void)
+{
+#ifdef CAT_PLATFORM_TIME_WIN
+    LARGE_INTEGER pf = { 0 };
+    if (!QueryPerformanceFrequency(&pf))
+        return 0;
+    return pf.LowPart;
+#else // #ifdef CAT_PLATFORM_TIME_WIN
+    return NS_PER_S;
+#endif // #else // #ifdef CAT_PLATFORM_TIME_WIN
+}
+
+cat_impl cat_time_t cat_platform_time(void)
+{
+#ifdef CAT_PLATFORM_TIME_WIN
+    LARGE_INTEGER pc = { 0 };
+    if (!QueryPerformanceCounter(&pc))
+        return 0;
+    return pc.QuadPart;
+#else // #ifdef CAT_PLATFORM_TIME_WIN
+    struct timespec ts = { 0 };
+    if (timespec_get(&ts, TIME_UTC) != TIME_UTC)
+        return 0;
+    return (ts.tv_sec * NS_PER_S + ts.tv_nsec);
+#endif // #else // #ifdef CAT_PLATFORM_TIME_WIN
+}
+
+cat_impl void cat_platform_sleep(cat_time_t const duration)
+{
+    cat_time_t const t = cat_platform_time() + duration;
+    while (cat_platform_time() < t);
+}
+
+
+#include <stdio.h>
+#include <inttypes.h>
+
+cat_noinl void cat_platform_time_test(void)
+{
+    cat_time_rate_t const volatile t_rate = cat_platform_time_rate();
+    cat_time_t const volatile t0 = cat_platform_time();
+    cat_time_t volatile dt = 0;
+    cat_platform_sleep(t_rate);
+    dt = cat_platform_time() - t0;
+    printf("\nPlatform time: \n    t_rate=%"PRIu32" t0=%"PRIi64" dt=%"PRIi64, t_rate, t0, dt);
+}
+
 
 cat_implementation_end;
