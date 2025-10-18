@@ -24,6 +24,10 @@
 #include "cat/cat_platform.inl"
 
 #include <threads.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else // #ifdef _WIN32
+#endif // #else // #ifdef _WIN32
 
 
 cat_implementation_begin;
@@ -59,9 +63,42 @@ cat_impl int cat_thrd_create(thrd_t* const p_thread_out, cat_thread_func_t const
 
 cat_impl bool cat_thread_rename(cstr_t const name)
 {
+    bool result = false;
     assert_or_bail(name) false;
-
-    return false;
+#ifdef _WIN32
+    {
+#pragma warning(push)
+#pragma warning(disable: 4820 6320 6322)// suppress warnings
+#pragma pack(push, 8) // 8-bit alignment
+	    // name change structure: 
+	    // declare a data structure that can be used internally
+        struct tagTHREADNAME_INFO
+        {
+            DWORD  type;    // reserved (must be 0x1000)
+            LPCSTR name;    // name string (provided by caller)
+            DWORD  threadID;// thread ID (-1 for calling thread)
+            DWORD  flags;   // reserved (must be zero)
+        } const info = { 0x1000, name, (DWORD)(-1), 0 };
+#pragma pack(pop)
+        __try
+        {
+            // attempt name change
+            DWORD const exception = 0x406D1388;
+            RaiseException(exception, 0,
+                (sizeof(info) / sizeof(ULONG_PTR)),
+                (ULONG_PTR const*)(&info));
+        }
+        __except (EXCEPTION_EXECUTE_HANDLER)
+        {
+            // unhandled exception
+        }
+        result = true;
+#pragma warning(pop)
+    }
+#else // #ifdef _WIN32
+    // Not supported.
+#endif // #else // #ifdef _WIN32
+    return result;
 }
 
 
