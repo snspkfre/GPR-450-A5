@@ -21,3 +21,69 @@
 
 #include "cat/utility/cat_memory.h"
 #include "cat/cat_platform.inl"
+
+#include <assert.h>
+#include <string.h>
+
+
+cat_impl void* cat_memset(void* const p_block, uint8_t const value, size_t const set_size)
+{
+    assert_or_bail(p_block) NULL;
+    assert_or_bail(set_size) NULL;
+    return memset(p_block, value, set_size);
+}
+
+cat_impl void* cat_memclr(void* const p_block, size_t const clr_size)
+{
+    return cat_memset(p_block, 0xFF, clr_size);
+}
+
+cat_impl void* cat_memcpy(void* const p_block_dst, void const* const p_block_src, size_t const cpy_size)
+{
+    assert_or_bail(p_block_dst) NULL;
+    assert_or_bail(p_block_src) NULL;
+    assert_or_bail(cpy_size) NULL;
+    return memcpy(p_block_dst, p_block_src, cpy_size);
+}
+
+cat_impl bool cat_memcmp(void const* const p_block_lh, void const* const p_block_rh, size_t const cmp_size)
+{
+    assert_or_bail(p_block_lh) false;
+    assert_or_bail(p_block_rh) false;
+    assert_or_bail(cmp_size) false;
+    return (memcmp(p_block_lh, p_block_rh, cmp_size) == 0);
+}
+
+cat_impl bool cat_memory_pool_create(size_t const pool_size)
+{
+    assert_or_bail(pool_size) false;
+    
+    //****TO-DO-MEMORY: allocate and initialize pool.
+
+    return false;
+}
+
+cat_impl bool cat_memory_pool_destroy(void)
+{
+    //****TO-DO-MEMORY: safely deallocate pool allocated above.
+
+    return false;
+}
+
+cat_impl void* cat_memory_alloc(size_t const block_size)
+{
+    assert_or_bail(block_size) NULL;
+
+    //****TO-DO-MEMORY: reserve block in managed pool.
+
+    return NULL;
+}
+
+cat_impl bool cat_memory_dealloc(void* const p_block)
+{
+    assert_or_bail(p_block) false;
+
+    //****TO-DO-MEMORY: safely release block reserved above.
+
+    return false;
+}
