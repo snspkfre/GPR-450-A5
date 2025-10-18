@@ -65,6 +65,30 @@ cat_decl void* cat_memcpy(void* const p_block_dst, void const* const p_block_src
 //! \return True if blocks are equal.
 cat_decl bool cat_memcmp(void const* const p_block_lh, void const* const p_block_rh, size_t const cmp_size);
 
+//! \fn cat_malloc
+//! \brief Wrapper for standard malloc.
+//! \param block_size Size of block to allocate in bytes.
+//! \return Pointer to block.
+cat_decl void* cat_malloc(size_t const block_size);
+
+//! \fn cat_calloc
+//! \brief Wrapper for standard calloc.
+//! \param element_count Number of elements to allocate.
+//! \param element_size Size of single element in bytes.
+//! \return Pointer to block.
+cat_decl void* cat_calloc(size_t const element_count, size_t const element_size);
+
+//! \fn cat_realloc
+//! \brief Wrapper for standard realloc.
+//! \param p_block Pointer to block.
+//! \param block_size Size of block to allocate in bytes.
+//! \return Pointer to block.
+cat_decl void* cat_realloc(void* const p_block, size_t const block_size);
+
+//! \fn cat_free
+//! \brief Wrapper for standard free.
+//! \param p_block Pointer to block.
+cat_decl void cat_free(void* const p_block);
 
 //! \fn cat_memory_pool_create
 //! \brief Allocate and initialize managed memory pool.

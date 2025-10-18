@@ -26,6 +26,16 @@
 #include <string.h>
 
 
+typedef struct cat_malloc_metadata_s
+{
+#ifdef _WIN32
+    uint32_t reserved;
+#else // #ifdef _WIN32
+    uint32_t reserved;
+#endif // #else // #ifdef _WIN32
+} cat_malloc_metadata_t;
+
+
 cat_impl void* cat_memset(void* const p_block, uint8_t const value, size_t const set_size)
 {
     assert_or_bail(p_block) NULL;
@@ -52,6 +62,62 @@ cat_impl bool cat_memcmp(void const* const p_block_lh, void const* const p_block
     assert_or_bail(p_block_rh) false;
     assert_or_bail(cmp_size) false;
     return (memcmp(p_block_lh, p_block_rh, cmp_size) == 0);
+}
+
+cat_impl void* cat_malloc(size_t const block_size)
+{
+#ifdef CAT_DEBUG
+    cat_malloc_metadata_t* p_meta = NULL;
+#endif // #ifdef CAT_DEBUG
+    void* p_block = NULL;
+    assert_or_bail(block_size) NULL;
+    p_block = malloc(block_size);
+#ifdef CAT_DEBUG
+    unused(p_meta);
+#endif // #ifdef CAT_DEBUG
+    return p_block;
+}
+
+cat_impl void* cat_calloc(size_t const element_count, size_t const element_size)
+{
+#ifdef CAT_DEBUG
+    cat_malloc_metadata_t* p_meta = NULL;
+#endif // #ifdef CAT_DEBUG
+    void* p_block = NULL;
+    assert_or_bail(element_count) NULL;
+    assert_or_bail(element_size) NULL;
+    p_block = calloc(element_count, element_size);
+#ifdef CAT_DEBUG
+    unused(p_meta);
+#endif // #ifdef CAT_DEBUG
+    return p_block;
+}
+
+cat_impl void* cat_realloc(void* const p_block, size_t const block_size)
+{
+#ifdef CAT_DEBUG
+    cat_malloc_metadata_t* p_meta = NULL;
+#endif // #ifdef CAT_DEBUG
+    void* p_block_new = NULL;
+    assert_or_bail(p_block) NULL;
+    assert_or_bail(block_size) NULL;
+    p_block_new = realloc(p_block, block_size);
+#ifdef CAT_DEBUG
+    unused(p_meta);
+#endif // #ifdef CAT_DEBUG
+    return p_block_new;
+}
+
+cat_impl void cat_free(void* const p_block)
+{
+#ifdef CAT_DEBUG
+    cat_malloc_metadata_t* p_meta = NULL;
+#endif // #ifdef CAT_DEBUG
+    assert_or_bail(p_block);
+#ifdef CAT_DEBUG
+    unused(p_meta);
+#endif // #ifdef CAT_DEBUG
+    free(p_block);
 }
 
 cat_impl bool cat_memory_pool_create(size_t const pool_size)
