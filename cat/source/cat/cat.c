@@ -23,11 +23,13 @@
 
 
 extern void cat_console_test(void);
+extern void cat_platform_time_test(void);
 
 
-int cat_test_all(int const argc, char const* const argv[])
+cat_noinl int cat_test_all(int const argc, char const* const argv[])
 {
     unused2(argc, argv);
     cat_console_test();
+    cat_platform_time_test();
     return 0;
 }

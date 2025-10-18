@@ -15,21 +15,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
-* cat_console_win.c
-* Console implementation for Windows.
+* cat_console.c
+* Console implementation.
 */
 
-#include "cat/cat_console.h"
+#include "cat/utility/cat_console.h"
 #include "cat/cat_platform.inl"
-
-
-cat_implementation_begin;
 
 
 #ifdef _WIN32
 #include <io.h>
 #include <stdio.h>
+#include <inttypes.h>
 #include <Windows.h>
+
+
+cat_implementation_begin;
 
 
 typedef struct cat_console_s
@@ -425,9 +426,9 @@ cat_impl bool cat_console_draw_test_patch(void)
             bg = (cat_console_color_t)x;
             cat_console_set_color(fg, bg);
             cat_console_set_pos(x * 2, y);
-            printf("%x", (int32_t)x);
+            printf("%"PRIx32, (int32_t)x);
             cat_console_set_pos_color(x * 2 + 1, y, fg, bg);
-            printf("%x", (int32_t)y);
+            printf("%"PRIx32, (int32_t)y);
         }
     }
     cat_console_get_pos(&x, &y);
@@ -435,7 +436,7 @@ cat_impl bool cat_console_draw_test_patch(void)
     cat_console_get_pos_color(&x, &y, &fg, &bg);
     cat_console_get_size(&w, &h);
     cat_console_reset_color();
-    printf("XY=(%d, %d) WH=(%d, %d) \n", (int32_t)x, (int32_t)y, (int32_t)w, (int32_t)h);
+    printf("XY=(%"PRIi32", %"PRIi32") WH=(%"PRIi32", %"PRIi32") \n", (int32_t)x, (int32_t)y, (int32_t)w, (int32_t)h);
     return true;
 }
 
@@ -456,10 +457,18 @@ cat_impl int cat_console_debug_print(cstr_t const format, ...)
 }
 
 
-#endif // #ifdef _WIN32
+cat_implementation_end;
 
 
-void cat_console_test(void)
+#else // #ifdef _WIN32
+#error Console not implemented for platform.
+#endif // #else // #ifdef _WIN32
+
+
+cat_implementation_begin;
+
+
+cat_noinl void cat_console_test(void)
 {
     cat_console_draw_test_patch();
 }
