@@ -14,18 +14,10 @@
 /// limitations under the License.
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! \file cat.h
-*   \brief Main include.
+/*
+* cat_memory.c
+* Memory management implementation.
 */
 
-#ifndef _CAT_H_
-#define _CAT_H_
-
-
-#include "cat/cat_platform.h"
-#include "cat/utility/cat_console.h"
-#include "cat/utility/cat_platform_time.h"
 #include "cat/utility/cat_memory.h"
-
-
-#endif // #ifndef _CAT_H_
+#include "cat/cat_platform.inl"
