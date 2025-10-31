@@ -49,8 +49,10 @@
 
 #ifdef _WIN32
 #define cat_noinl __declspec(noinline)
+#define cat_doinl __forceinline
 #else // #ifdef _WIN32
 #define cat_noinl __attribute__((noinline))
+#define cat_doinl __attribute__((always_inline))
 #endif // #else // #ifdef _WIN32
 
 #define cat_decl

@@ -171,15 +171,23 @@ cat_noinl void cat_memory_test(void)
     void* block_lh = cat_malloc(1024);
     void* block_rh = cat_malloc(2048);
 
-    cat_console_clear();
-    cat_memset(block_lh, 0xFF, 1024);
-    cat_memclr(block_rh, 2048);
-    result = cat_memcmp(block_lh, block_rh, 2048);
-    printf("\nMemory: \n    Blocks are equal: %"PRIi32, (int32_t)result);
-    cat_memcpy(block_lh, block_rh, 1024);
-    result = cat_memcmp(block_lh, block_rh, 1024);
-    printf("\nMemory: \n    Blocks are equal: %"PRIi32, (int32_t)result);
-    cat_platform_sleep(cat_platform_time_rate());
+    if (block_lh && block_rh)
+    {
+        cat_console_clear();
+        cat_memset(block_lh, 0xFF, 1024);
+        cat_memclr(block_rh, 2048);
+        result = cat_memcmp(block_lh, block_rh, 2048);
+        printf("\nMemory: \n    Blocks are equal: %"PRIi32, (int32_t)result);
+        cat_memcpy(block_lh, block_rh, 1024);
+        result = cat_memcmp(block_lh, block_rh, 1024);
+        printf("\nMemory: \n    Blocks are equal: %"PRIi32, (int32_t)result);
+        cat_platform_sleep(cat_platform_time_rate());
+    }
+
+    cat_free(block_lh);
+    block_lh = NULL;
+    cat_free(block_rh);
+    block_rh = NULL;
 }
 
 
