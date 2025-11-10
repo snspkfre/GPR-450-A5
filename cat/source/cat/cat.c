@@ -26,6 +26,7 @@ extern void cat_time_test(void);
 extern void cat_console_test(void);
 extern void cat_memory_test(void);
 extern void cat_thread_test(void);
+extern void runTests(const char*);
 
 
 cat_noinl int cat_test_all(int const argc, char const* const argv[])
