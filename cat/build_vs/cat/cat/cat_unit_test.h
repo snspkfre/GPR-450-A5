@@ -6,10 +6,10 @@
 
 cat_interface_begin;
 
-int dotProduct(int vec1[3], int vec2[3]) { return (vec1[0] * vec2[0]) + (vec1[1] * vec2[1]) + (vec1[2] * vec2[2]); }
+int dotProduct(const int vec1[3], const int vec2[3]) { return (vec1[0] * vec2[0]) + (vec1[1] * vec2[1]) + (vec1[2] * vec2[2]); }
 void runTests(const char* filePath);
 
-/*typedef testFunc*/ int(*func)(int*, int*) = dotProduct;//declaring a function
+/*typedef testFunc*/ int(*func)(int*, int*) = dotProduct;//declaring a function pointer
 
 int* temp1, temp2;
 void brug()
