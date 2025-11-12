@@ -24,21 +24,36 @@ float* execTest_fp_v3f_v3f_v3f(testfp_vec3f_vec3f_vec3f func, vec3f v_out, const
 	return (*func)(v_out, v1, v2);
 }
 
-void runUnitTests()
+void runUnitTests(void)
 {
 	vec3f v_out, v1 = { 1, 0, 0 }, v2 = { 0, 1, 0 };
 	
 	float expD = 0;
 	testf_vec3f_vec3f dTest = dotProduct;
-	InitTest(dTest);
-	expD == ExecTest(dTest, v1, v2);//Do something with this
-	CleanTest(dTest);
+	InitTest(&dTest);
+	float dTestResult = ExecTest(dTest, v1, v2);
+	expD == dTestResult ? printf("\nDot test Pass") : printf("\nDot test Fail");//Do something else with this
+	CleanTest(&dTest);
 
 	vec3f expC = { 0, 0, 1 };
 	testfp_vec3f_vec3f_vec3f cTest = crossProduct;
-	InitTest(cTest);
-	expC == ExecTest(cTest, v_out, v1, v2);//Do something with this
-	CleanTest(cTest);
+	InitTest(&cTest);
+	float* cTestResult = ExecTest(cTest, v_out, v1, v2);
+	for (int i = 0; i < 3; i++)
+	{
+		if (expC[i] != cTestResult[i])
+		{
+			printf("\nCross test Fail");
+			break;
+		}
+		if (i == 2)
+		{
+			printf("\nCross test Pass");
+		}
+	}
+
+	//printf("\n%f", ExecTest(cTest, v_out, v1, v2)[2]);
+	CleanTest(&cTest);
 
 	//need to do vector projection and add more tests
 }

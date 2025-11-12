@@ -141,7 +141,8 @@ cat_impl bool cat_memory_pool_destroy(void)
 {
     //****TO-DO-MEMORY: safely deallocate pool allocated above.
     //i do not know how dis works, probs setting each individual part to null then big free call
-
+    //move ptr then cat_memory_dealloc
+    //cat_free();
     return false;
 }
 
