@@ -10,8 +10,9 @@ typedef float vec3f[3];
 typedef float (*testf_vec3f_vec3f)(const vec3f, const vec3f);
 typedef float* (*testfp_vec3f_vec3f_vec3f)(vec3f, const vec3f, const vec3f);
 
-float dotProduct(const vec3f vector1, const vec3f vector2) { return 1.0f; }
-float* crossProduct(vec3f result, const vec3f vector1, const vec3f vector2);
+float dotProduct(const vec3f v1, const vec3f v2);
+float* crossProduct(vec3f v_out, const vec3f v1, const vec3f v2);
+float* vec3fProj(vec3f v_out, const vec3f v1, const vec3f v2);
 
 ///*typedef testFunc*/ int(*func)(int*, int*) = dotProduct;//declaring a function pointer
 
@@ -47,7 +48,7 @@ bool cleanTest_fp_v3f_v3f_v3f(testfp_vec3f_vec3f_vec3f* funcPtr)
          testfp_vec3f_vec3f_vec3f: initTest_fp_v3f_v3f_v3f  \
               )(X)
 
-#define ExecTest(X, ...) _Generic((X),						    \
+#define ExecTest(X, ...) _Generic((X),						\
                 testf_vec3f_vec3f: execTest_f_v3f_v3f,		\
          testfp_vec3f_vec3f_vec3f: execTest_fp_v3f_v3f_v3f  \
               )(X, __VA_ARGS__)
@@ -57,6 +58,6 @@ bool cleanTest_fp_v3f_v3f_v3f(testfp_vec3f_vec3f_vec3f* funcPtr)
          testfp_vec3f_vec3f_vec3f: cleanTest_fp_v3f_v3f_v3f \
               )(X)
 
-void runTests();
+void runUnitTests();
 
 cat_interface_end;

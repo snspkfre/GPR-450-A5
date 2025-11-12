@@ -132,6 +132,7 @@ cat_impl bool cat_memory_pool_create(size_t const pool_size)
     assert_or_bail(pool_size) false;
     
     //****TO-DO-MEMORY: allocate and initialize pool.
+    cat_malloc(pool_size);
 
     return false;
 }
@@ -139,6 +140,7 @@ cat_impl bool cat_memory_pool_create(size_t const pool_size)
 cat_impl bool cat_memory_pool_destroy(void)
 {
     //****TO-DO-MEMORY: safely deallocate pool allocated above.
+    //i do not know how dis works, probs setting each individual part to null then big free call
 
     return false;
 }
@@ -148,6 +150,7 @@ cat_impl void* cat_memory_alloc(size_t const block_size)
     assert_or_bail(block_size) NULL;
 
     //****TO-DO-MEMORY: reserve block in managed pool.
+    //check where there is free memory and if there is adequete space fill it with this. 
 
     return NULL;
 }
@@ -157,6 +160,7 @@ cat_impl bool cat_memory_dealloc(void* const p_block)
     assert_or_bail(p_block) false;
 
     //****TO-DO-MEMORY: safely release block reserved above.
+    //remove the thing and fill where it was with the things after it in the linked list
 
     return false;
 }
