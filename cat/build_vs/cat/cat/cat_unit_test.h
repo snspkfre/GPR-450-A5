@@ -12,24 +12,51 @@ typedef float* (*testfp_vec3f_vec3f_vec3f)(vec3f, const vec3f, const vec3f);
 
 float dotProduct(const vec3f vector1, const vec3f vector2) { return 1.0f; }
 float* crossProduct(vec3f result, const vec3f vector1, const vec3f vector2);
-//void runTests(const char* filePath);
 
-/*typedef testFunc*/ int(*func)(int*, int*) = dotProduct;//declaring a function pointer
-#define testFunction(X) _Generic((X),						\
+///*typedef testFunc*/ int(*func)(int*, int*) = dotProduct;//declaring a function pointer
+
+bool initTest_f_v3f_v3f(testf_vec3f_vec3f* funcPtr)
+{
+    if (funcPtr == NULL)
+        funcPtr = malloc(sizeof(testf_vec3f_vec3f));
+}
+
+bool initTest_fp_v3f_v3f_v3f(testfp_vec3f_vec3f_vec3f* funcPtr)
+{
+    if (funcPtr == NULL)
+        funcPtr = malloc(sizeof(testfp_vec3f_vec3f_vec3f));
+}
+
+float execTest_f_v3f_v3f(testf_vec3f_vec3f, const vec3f, const vec3f);
+float* execTest_fp_v3f_v3f_v3f(testfp_vec3f_vec3f_vec3f, vec3f, const vec3f, const vec3f);
+
+bool cleanTest_f_v3f_v3f(testf_vec3f_vec3f* funcPtr)
+{
+    free(funcPtr);
+    funcPtr = NULL;
+}
+
+bool cleanTest_fp_v3f_v3f_v3f(testfp_vec3f_vec3f_vec3f* funcPtr)
+{
+    free(funcPtr);
+    funcPtr = NULL;
+}
+
+#define InitTest(X) _Generic((X),						    \
                 testf_vec3f_vec3f: initTest_f_v3f_v3f,		\
          testfp_vec3f_vec3f_vec3f: initTest_fp_v3f_v3f_v3f  \
               )(X)
 
-struct
-{
-	func*;
-	void* expected;
-	void* args;
-};
+#define ExecTest(X, ...) _Generic((X),						    \
+                testf_vec3f_vec3f: execTest_f_v3f_v3f,		\
+         testfp_vec3f_vec3f_vec3f: execTest_fp_v3f_v3f_v3f  \
+              )(X, __VA_ARGS__)
 
-int* temp1, temp2;
-void brug()
-{
-	int temp = func(temp1, temp2);//how to call a function pointer
-}
+#define CleanTest(X) _Generic((X),						    \
+                testf_vec3f_vec3f: cleanTest_f_v3f_v3f,		\
+         testfp_vec3f_vec3f_vec3f: cleanTest_fp_v3f_v3f_v3f \
+              )(X)
+
+void runTests();
+
 cat_interface_end;

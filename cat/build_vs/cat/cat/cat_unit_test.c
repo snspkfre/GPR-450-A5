@@ -1,56 +1,26 @@
 #include "cat_unit_test.h"
 
-//file reading uses animal3D as a reference
-
-void runTests(const char* filePath)
+float execTest_f_v3f_v3f(testf_vec3f_vec3f func, const vec3f v1, const vec3f v2)
 {
-	FILE* file = fopen(filePath, "r");
+	return (*func)(v1, v2);
+}
 
-	if (!file)
-		return;
+float* execTest_fp_v3f_v3f_v3f(testfp_vec3f_vec3f_vec3f func, vec3f v_out, const vec3f v1, const vec3f v2)
+{
+	return (*func)(v_out, v1, v2);
+}
 
-	const char FunctionNames[][32] = 
-	{
-		"[Dot Product]",
-	};
+void runTests()
+{
+	vec3f v_out, v1 = { 1, 0, 0 }, v2 = { 0, 1, 0 };
+	
+	testf_vec3f_vec3f dTest = dotProduct;
+	InitTest(dTest);
+	ExecTest(dTest, v1, v2);//returns output so check if its expected
+	CleanTest(dTest);
 
-	enum FunctionToTest
-	{
-		DotProduct,
-	};
-
-	char line[256];
-	int linesz = sizeof(line);
-	int func = DotProduct;
-	testFunc functionOps[] = 
-	{
-		dotProduct,
-	};
-
-	while (true)
-	{
-		fgets(line, linesz, file);
-
-		if (*line == '[')
-		{
-			//change section
-			for (int i = 0; i < sizeof(FunctionNames) / sizeof(FunctionNames[0]); i++)
-			{
-				if (strncmp(line, FunctionNames[i], strnlen(FunctionNames[i], 32)))
-				{
-					func = i;
-				}
-			}
-
-			continue;
-		}
-
-		switch (func)
-		{
-		case DotProduct:
-			sscanf();
-			int result = (int) *functionOps[DotProduct].function();
-			break;
-		}
-	}
+	testfp_vec3f_vec3f_vec3f cTest = crossProduct;
+	InitTest(cTest);
+	ExecTest(cTest, v_out, v1, v2);//returns output so check if its expected
+	CleanTest(cTest);
 }
