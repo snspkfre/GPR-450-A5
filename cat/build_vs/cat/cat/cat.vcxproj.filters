@@ -62,6 +62,9 @@
     <ClInclude Include="cat_unit_test.h">
       <Filter>Header Files\utility</Filter>
     </ClInclude>
+    <ClInclude Include="cat_profiler.h">
+      <Filter>Header Files\utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\source\cat\cat_platform.inl">
