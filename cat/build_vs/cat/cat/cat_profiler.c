@@ -70,27 +70,28 @@ void RunProfilerTests(void)
 	RingBuffer buffer;
 	RingBufferInit(&buffer, size);
 	double test = 0;
-	int64_t volatile initalTick = 0;
-	int64_t volatile lastTick = 0;
+	int64_t volatile initalTick = cat_platform_time();
+	int64_t volatile lastTick = cat_platform_time();
 	int64_t volatile dt = 0;
 	
 	cat_console_clear();
 	cat_platform_time_rate();
 
-	/*for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 1000; i++)
 	{
-		if (buffer == NULL)
+		if (&buffer == NULL)
 			return;
+
 		initalTick = cat_platform_time();
 		dt = initalTick - lastTick;
 		lastTick = initalTick;
-		RingBufferInsert(buffer, dt);
-		printf("\ntick average: %f", RingBufferAverage(buffer) / 1000000000);
+		RingBufferInsert(&buffer, dt);
+		printf("\ntick average: %f", RingBufferAverage(&buffer));
 		
 		test += 1;
-	}*/
+	}
 
-	cat_console_clear();
+	//cat_console_clear();
 
 	RingBufferClear(&buffer);
 	RingBufferClean(&buffer);
