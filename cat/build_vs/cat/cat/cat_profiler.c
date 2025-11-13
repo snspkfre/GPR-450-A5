@@ -12,6 +12,9 @@ void RingBufferInit(RingBuffer* buffer, int size)
 	buffer->footer = 0;
 	buffer->size = size;
 	buffer->values = (int64_t*)malloc(size * sizeof(int64_t));
+	
+	if (buffer->values == NULL)
+		return;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -21,10 +24,14 @@ void RingBufferInit(RingBuffer* buffer, int size)
 
 void RingBufferClean(RingBuffer* buffer)
 {
-	if (buffer == NULL)
+	if (buffer == NULL || buffer->values == NULL)
+	{
+		printf("clean already null");
 		return;
+	}
+
 	free(buffer->values);
-	//free(buffer);
+	free(buffer);
 }
 
 void RingBufferInsert(RingBuffer* buffer, int64_t value)
@@ -71,7 +78,7 @@ void RunProfilerTests(void)
 	cat_console_clear();
 	cat_platform_time_rate();
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 100; i++)
 	{
 		if (buffer == NULL)
 			return;
@@ -79,25 +86,13 @@ void RunProfilerTests(void)
 		dt = initalTick - lastTick;
 		lastTick = initalTick;
 		RingBufferInsert(buffer, dt);
-		printf("\ntick average: %f", RingBufferAverage(buffer));
+		printf("\ntick average: %f", RingBufferAverage(buffer) / 1000000000);
 		
 		test += 1;
 	}
 
-	//for (int i = 0; i < 10000; i++)
-	//{
-	//	initalTick = (double)cat_platform_time();
-	//	dt = initalTick - lastTick;
-	//	lastTick = initalTick;
-	//	RingBufferInsert(buffer, dt);
-	//	printf("tps: %f", RingBufferAverage(buffer));
+	cat_console_clear();
 
-	//	test += 1;
-
-	//	cat_console_clear();
-	//}
-
+	RingBufferClear(buffer);
 	RingBufferClean(buffer);
-	RingBufferClean(buffer);
-	free(buffer);
 }
