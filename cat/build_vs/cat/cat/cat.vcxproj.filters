@@ -39,6 +39,9 @@
     <ClCompile Include="cat_unit_test.c">
       <Filter>Source Files\utility</Filter>
     </ClCompile>
+    <ClCompile Include="cat_profiler.c">
+      <Filter>Source Files\utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\cat\cat.h">

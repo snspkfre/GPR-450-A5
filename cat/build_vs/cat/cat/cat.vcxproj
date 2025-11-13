@@ -172,6 +172,7 @@
     <ClCompile Include="..\..\..\source\cat\utility\cat_memory.c" />
     <ClCompile Include="..\..\..\source\cat\utility\cat_time.c" />
     <ClCompile Include="..\..\..\source\cat\utility\cat_thread.c" />
+    <ClCompile Include="cat_profiler.c" />
     <ClCompile Include="cat_unit_test.c" />
   </ItemGroup>
   <ItemGroup>
