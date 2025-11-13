@@ -42,6 +42,23 @@ typedef struct cat_malloc_metadata_s
 } cat_malloc_metadata_t;
 #endif // #ifdef CAT_DEBUG
 
+typedef struct HeapHeader
+{
+    size_t size;
+    struct HeapHeader* prev;
+    struct HeapHeader* next;
+    char* location;
+} HeapHeader;
+
+typedef struct Heap
+{
+    void* data;
+    size_t size;
+    struct HeapHeader* first;
+    struct HeapHeader* last;
+} Heap;
+
+static Heap my_heap = {NULL, 0, NULL, NULL};
 
 cat_impl void* cat_memset(void* const p_block, uint8_t const value, size_t const set_size)
 {
@@ -124,7 +141,7 @@ cat_impl void cat_free(void* const p_block)
 #ifdef CAT_DEBUG
     unused(p_meta);
 #endif // #ifdef CAT_DEBUG
-    free(p_block);
+    //cat_free(p_block);
 }
 
 cat_impl bool cat_memory_pool_create(size_t const pool_size)
@@ -132,33 +149,93 @@ cat_impl bool cat_memory_pool_create(size_t const pool_size)
     assert_or_bail(pool_size) false;
     
     //****TO-DO-MEMORY: allocate and initialize pool.
-    cat_malloc(pool_size);
-
-    return false;
+    
+    if (my_heap.data != NULL)
+        cat_memory_pool_destroy();
+    my_heap.data = cat_malloc(pool_size);
+    my_heap.size = pool_size;
+    my_heap.first = NULL;
+    my_heap.last = NULL;
+    return true;
 }
 
 cat_impl bool cat_memory_pool_destroy(void)
 {
     //****TO-DO-MEMORY: safely deallocate pool allocated above.
-    //i do not know how dis works, probs setting each individual part to null then big free call
-    //move ptr then cat_memory_dealloc
-    //cat_free();
+    for (HeapHeader* iter = my_heap.first; iter != NULL; )//not sure if this is needed
+    {
+        HeapHeader* temp = iter;
+        iter = iter->next;
+        temp->next = NULL;
+        temp->prev = NULL;
+    }
+
+    cat_free(my_heap.data);
+    my_heap.data = NULL;
+    my_heap.first = NULL;
+    my_heap.last = NULL;
+    my_heap.size = 0;
+
     return false;
 }
 
 cat_impl void* cat_memory_alloc(size_t const block_size)
 {
     assert_or_bail(block_size) NULL;
+    
+    if (my_heap.last == NULL)
+    {
+        if (sizeof(HeapHeader) + block_size > my_heap.size)//not enough space to accomodate so you return
+            return NULL;
+
+        void* loc = my_heap.data;
+        //loc = cat_malloc(sizeof(HeapHeader) + block_size);
+        ((HeapHeader*)(loc))->prev = NULL;
+        ((HeapHeader*)(loc))->next = NULL;
+        ((HeapHeader*)(loc))->location = loc;
+        ((HeapHeader*)(loc))->size = block_size;
+
+        return (void*)((char*)loc + sizeof(HeapHeader));
+    }
+
+    void* loc = (void*)((char*)my_heap.last + sizeof(HeapHeader) + my_heap.last->size);
+    
+    //if ((char*)loc > &(my_heap.data) + my_heap.size)
+    //{
+    //    //not enough size to accomodate for now we just return, but soon will make function to squish the fuckers
+    //    return NULL;
+    //}
+
+    //loc = cat_malloc(sizeof(HeapHeader) + block_size);
+    ((HeapHeader*)loc)->prev = my_heap.last;
+    ((HeapHeader*)loc)->next = NULL;
+    ((HeapHeader*)loc)->location = loc;
+    ((HeapHeader*)loc)->size = block_size;
+
+    my_heap.last = loc;
+    my_heap.size += sizeof(HeapHeader) + block_size;
 
     //****TO-DO-MEMORY: reserve block in managed pool.
     //check where there is free memory and if there is adequete space fill it with this. 
 
-    return NULL;
+    return loc;
 }
 
 cat_impl bool cat_memory_dealloc(void* const p_block)
 {
     assert_or_bail(p_block) false;
+    void* loc = (void*)((char*)p_block - sizeof(HeapHeader));
+    
+    ((HeapHeader*)loc)->prev->next = ((HeapHeader*)loc)->next;
+    ((HeapHeader*)loc)->next->prev = ((HeapHeader*)loc)->prev;
+    
+    if (my_heap.first == loc)
+        my_heap.first = ((HeapHeader*)loc)->next;
+    if (my_heap.last == loc)
+        my_heap.last = ((HeapHeader*)loc)->prev;
+    
+    ((HeapHeader*)loc)->prev = NULL;
+    ((HeapHeader*)loc)->next = NULL;
 
     //****TO-DO-MEMORY: safely release block reserved above.
     //remove the thing and fill where it was with the things after it in the linked list
@@ -194,6 +271,14 @@ cat_noinl void cat_memory_test(void)
     block_lh = NULL;
     cat_free(block_rh);
     block_rh = NULL;
+
+    if(!cat_memory_pool_create(1024)) return;
+    
+    cat_memory_pool_destroy();
+    /*HeapHeader* intPointer = cat_memory_alloc(sizeof(int));
+    *(int*)(intPointer + sizeof(int)) = 5;
+    cat_memory_pool_destroy();*/
 }
+
 
 cat_implementation_end;
