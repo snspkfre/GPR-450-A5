@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "cat_unit_test.h"
+#include "cat/utility/cat_time.h"//added this include :)
 
 cat_interface_begin;
 
