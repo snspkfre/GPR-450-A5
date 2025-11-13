@@ -194,18 +194,6 @@ cat_noinl void cat_memory_test(void)
     block_lh = NULL;
     cat_free(block_rh);
     block_rh = NULL;
-    {
-        void* volatile testA = malloc(1024);
-        void* volatile testB = malloc(2048);
-        void* volatile testC = malloc(4096);
-        void* volatile testD = malloc(8192);
-        
-        free(testD);
-        free(testC);
-        free(testB);
-        free(testA);
-    }
 }
-
 
 cat_implementation_end;
