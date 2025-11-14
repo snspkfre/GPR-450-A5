@@ -195,6 +195,9 @@ cat_impl void* cat_memory_alloc(size_t const block_size)
         ((HeapHeader*)(loc))->location = loc;
         ((HeapHeader*)(loc))->size = block_size;
 
+        my_heap.first = loc;
+        my_heap.last = loc;
+
         return (void*)((char*)loc + sizeof(HeapHeader));
     }
 
@@ -208,6 +211,7 @@ cat_impl void* cat_memory_alloc(size_t const block_size)
 
     //loc = cat_malloc(sizeof(HeapHeader) + block_size);
     ((HeapHeader*)loc)->prev = my_heap.last;
+    ((HeapHeader*)loc)->prev->next = loc;
     ((HeapHeader*)loc)->next = NULL;
     ((HeapHeader*)loc)->location = loc;
     ((HeapHeader*)loc)->size = block_size;
@@ -218,14 +222,17 @@ cat_impl void* cat_memory_alloc(size_t const block_size)
     //****TO-DO-MEMORY: reserve block in managed pool.
     //check where there is free memory and if there is adequete space fill it with this. 
 
-    return loc;
+    return (void*)((char*)loc + sizeof(HeapHeader));
 }
 
 cat_impl bool cat_memory_dealloc(void* const p_block)
 {
     assert_or_bail(p_block) false;
     void* loc = (void*)((char*)p_block - sizeof(HeapHeader));
-    
+
+    HeapHeader* tmp = (HeapHeader*)loc;
+    unused(tmp);
+
     ((HeapHeader*)loc)->prev->next = ((HeapHeader*)loc)->next;
     ((HeapHeader*)loc)->next->prev = ((HeapHeader*)loc)->prev;
     
@@ -272,7 +279,20 @@ cat_noinl void cat_memory_test(void)
     cat_free(block_rh);
     block_rh = NULL;
 
+
+    int sizeA = 8, sizeB = 16, sizeC = 32;
+    void* blockA;
+    void* blockB;
+    void* blockC;
+    HeapHeader* checkA, *checkC;
     if(!cat_memory_pool_create(1024)) return;
+    blockA = cat_memory_alloc(sizeA);
+    blockB = cat_memory_alloc(sizeB);
+    blockC = cat_memory_alloc(sizeC);
+
+    cat_memory_dealloc(blockB);
+    checkA = (void*)((char*)blockA - sizeof(HeapHeader));
+    checkC = (void*)((char*)blockC - sizeof(HeapHeader));
     
     cat_memory_pool_destroy();
     /*HeapHeader* intPointer = cat_memory_alloc(sizeof(int));
