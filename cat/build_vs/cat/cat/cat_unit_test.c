@@ -32,7 +32,15 @@ float* vec3fAdd(vec3f v_out, const vec3f v1, const vec3f v2)
 
 	return v_out;
 }
-//scalar vector multiplication
+
+float* componentMult(vec3f v_out, const vec3f v1, const float scalar)
+{
+	for(int i = 0; i <= 2; i++)
+		v_out[i] = v1[i] * scalar;
+
+	return v_out;
+}
+
 
 float execTest_f_v3f_v3f(test_f_vec3f_vec3f func, const vec3f v1, const vec3f v2)
 {
@@ -44,9 +52,15 @@ float* execTest_fp_v3f_v3f_v3f(test_fp_vec3f_vec3f_vec3f func, vec3f v_out, cons
 	return (*func)(v_out, v1, v2);
 }
 
+float* execTest_fp_v3f_v3f_f(test_fp_vec3f_vec3f_f func, vec3f v_out, const vec3f v1, const float scalar)
+{
+	return (*func)(v_out, v1, scalar);
+}
+
 void runUnitTests(void)
 {
 	vec3f v_out, v1 = { 1, 0, 0 }, v2 = { 0, 1, 0 };
+	float scalar = 1;
 	
 	float expD = 0;
 	test_f_vec3f_vec3f dTest = dotProduct;
@@ -99,6 +113,22 @@ void runUnitTests(void)
 		if (i == 2)
 		{
 			printf("\nAddition test Pass");
+		}
+	}
+
+	vec3f expCM = { 1, 0, 0 };
+	test_fp_vec3f_vec3f_f cmTest = componentMult;
+	float* cmTestResult = ExecTest(cmTest, v_out, v1, scalar);
+	for (int i = 0; i < 3; i++)
+	{
+		if (expCM[i] != cmTestResult[i])
+		{
+			printf("\nComponent multiplication test Fail");
+			break;
+		}
+		if (i == 2)
+		{
+			printf("\nComponent multiplication test Pass");
 		}
 	}
 
