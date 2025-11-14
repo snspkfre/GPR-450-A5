@@ -1,5 +1,6 @@
 #include "cat_profiler.h"
 #include "cat/utility/cat_time.h"
+#include <math.h>
 
 //extern void cat_platform_time_rate(void);
 //extern void cat_platform_time(void);
@@ -36,8 +37,8 @@ void RingBufferClean(RingBuffer* buffer)
 void RingBufferInsert(RingBuffer* buffer, int64_t value)
 {
 	buffer->values[buffer->index] = value;
-	buffer->index = buffer->index == buffer->size ? 0 : buffer->index + 1;
-	buffer->footer = buffer->footer > buffer->size ? buffer->size : buffer->footer + 1;
+	buffer->index = buffer->index == buffer->size - 1 ? 0 : buffer->index + 1;
+	buffer->footer = buffer->footer > buffer->size -1 ? buffer->size : buffer->footer + 1;
 }
 
 void RingBufferClear(RingBuffer* buffer)
@@ -69,15 +70,16 @@ void RunProfilerTests(void)
 	int size = 1024;
 	RingBuffer buffer;
 	RingBufferInit(&buffer, size);
-	double test = 0;
-	int64_t volatile initalTick = cat_platform_time();
+	double testOn = 0, testOnLogn = 0, testOsqn = 0;
+	int64_t volatile initalTick;
 	int64_t volatile lastTick = cat_platform_time();
 	int64_t volatile dt = 0;
+	int timeLooping = 5000;
 	
 	cat_console_clear();
-	cat_platform_time_rate();
+	double tps = cat_platform_time_rate();
 
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < timeLooping; i++)
 	{
 		if (&buffer == NULL)
 			return;
@@ -86,12 +88,70 @@ void RunProfilerTests(void)
 		dt = initalTick - lastTick;
 		lastTick = initalTick;
 		RingBufferInsert(&buffer, dt);
-		printf("\ntick average: %f", RingBufferAverage(&buffer));
-		
-		test += 1;
+		printf("\n%d second average: %f", i, RingBufferAverage(&buffer) / tps);
+		testOnLogn += dt;
+
+		for (int j = 1; j < timeLooping; j *= 2)
+		{
+			unused(j);
+		}
 	}
 
-	//cat_console_clear();
+	printf("\n\n-----------------------------------------------------------\n");
+
+	RingBufferClear(&buffer);
+	lastTick = cat_platform_time();
+
+
+	for (int i = 0; i < timeLooping; i++)
+	{
+		if (&buffer == NULL)
+			return;
+
+		initalTick = cat_platform_time();
+		dt = initalTick - lastTick;
+		lastTick = initalTick;
+		RingBufferInsert(&buffer, dt);
+		printf("\n%d second average: %f", i, RingBufferAverage(&buffer) / tps);
+
+		for (int j = 0; j < timeLooping; j++)
+		{
+			unused(j);
+		}
+
+		testOn += dt;
+	}
+
+
+	printf("\n\n-----------------------------------------------------------\n");
+	RingBufferClear(&buffer);
+	lastTick = cat_platform_time();
+	
+	for (int k = 0; k < timeLooping; k++)
+	{
+		if (&buffer == NULL)
+			return;
+
+		initalTick = cat_platform_time();
+		dt = initalTick - lastTick;
+		lastTick = initalTick;
+		RingBufferInsert(&buffer, dt);
+		printf("\n%d second average: %f", k, RingBufferAverage(&buffer) / tps);
+		testOsqn += dt;
+
+		for (int i = 0; i < timeLooping; i++)
+		{
+			unused(i);
+			for (int j = 0; j < timeLooping; j++)
+			{
+				unused(j);
+			}
+		}
+	}
+	
+	printf("\n\n-----------------------------------------------------------\n");
+	printf("\nAverage time in seconds of O(log_2(n)) loop: %f \nAverage time in seconds of O(n) loop:%f \nAverage time in seconds of O(n^2) loop: %f", 
+		testOnLogn / timeLooping / tps, testOn / timeLooping / tps, testOsqn / timeLooping / tps);
 
 	RingBufferClear(&buffer);
 	RingBufferClean(&buffer);
