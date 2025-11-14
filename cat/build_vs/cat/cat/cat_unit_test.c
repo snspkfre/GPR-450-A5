@@ -59,22 +59,18 @@ float* execTest_fp_v3f_v3f_f(test_fp_vec3f_vec3f_f func, vec3f v_out, const vec3
 
 void runUnitTests(void)
 {
-
 	vec3f v_out, v1 = { 1, 0, 0 }, v2 = { 0, 1, 0 };
 	float scalar = 1;
 	
 	float expD = 0;
+
 	test_f_vec3f_vec3f dTest = dotProduct;
 	float dTestResult = ExecTest(dTest, v1, v2);
-	expD == dTestResult ? printf("\nDot test Pass") : printf("\nDot test Fail");//Do something else with this
+	expD == dTestResult ? printf("\nDot test Pass") : printf("\nDot test Fail");
 
 	vec3f expC = { 0, 0, 1 };
 	test_fp_vec3f_vec3f_vec3f cTest = crossProduct;
-
-	test_data data;
-	data.func = &cTest;
-
-	float* cTestResult = ExecTest((test_function)data.func, v_out, v1, v2);
+	float* cTestResult = ExecTest(cTest, v_out, v1, v2);
 	for (int i = 0; i < 3; i++)
 	{
 		if (expC[i] != cTestResult[i])
@@ -135,8 +131,4 @@ void runUnitTests(void)
 			printf("\nComponent multiplication test Pass");
 		}
 	}
-
-
-	//abstract this function
-	//test multiple values
 }
