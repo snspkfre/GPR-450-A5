@@ -71,10 +71,10 @@ void runUnitTests(void)
 	vec3f expC = { 0, 0, 1 };
 	test_fp_vec3f_vec3f_vec3f cTest = crossProduct;
 
-	//test_data data;
-	//data.func = &cTest;
+	test_data data;
+	data.func = &cTest;
 
-	float* cTestResult = ExecTest(cTest, v_out, v1, v2);
+	float* cTestResult = ExecTest((test_function)data.func, v_out, v1, v2);
 	for (int i = 0; i < 3; i++)
 	{
 		if (expC[i] != cTestResult[i])
