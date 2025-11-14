@@ -14,6 +14,8 @@
 /// limitations under the License.
 ////////////////////////////////////////////////////////////////////////////////
 
+//modified by: victor and annabelle
+
 /*
 * cat_memory.c
 * Memory management implementation.
@@ -144,12 +146,11 @@ cat_impl void cat_free(void* const p_block)
     //cat_free(p_block);
 }
 
+//allocates a pool of memory and initalizes heap
 cat_impl bool cat_memory_pool_create(size_t const pool_size)
 {
     assert_or_bail(pool_size) false;
-    
-    //****TO-DO-MEMORY: allocate and initialize pool.
-    
+      
     if (my_heap.data != NULL)
         cat_memory_pool_destroy();
     my_heap.data = cat_malloc(pool_size);
@@ -159,6 +160,7 @@ cat_impl bool cat_memory_pool_create(size_t const pool_size)
     return true;
 }
 
+//deallocates the pointers in the memory pool and the pool itself
 cat_impl bool cat_memory_pool_destroy(void)
 {
     //****TO-DO-MEMORY: safely deallocate pool allocated above.
@@ -179,15 +181,18 @@ cat_impl bool cat_memory_pool_destroy(void)
     return false;
 }
 
+//puts an x sized block into the pool, links blocks together if there is more than one
 cat_impl void* cat_memory_alloc(size_t const block_size)
 {
     assert_or_bail(block_size) NULL;
     
+    //if there are no blocks in the pool
     if (my_heap.last == NULL)
     {
         if (sizeof(HeapHeader) + block_size > my_heap.size)//not enough space to accomodate so you return
             return NULL;
 
+        //location is the start of the heap
         void* loc = my_heap.data;
         //loc = cat_malloc(sizeof(HeapHeader) + block_size);
         ((HeapHeader*)(loc))->prev = NULL;
@@ -198,9 +203,11 @@ cat_impl void* cat_memory_alloc(size_t const block_size)
         my_heap.first = loc;
         my_heap.last = loc;
 
+        //returns memory address of block
         return (void*)((char*)loc + sizeof(HeapHeader));
     }
 
+    //location is the end of the last block added
     void* loc = (void*)((char*)my_heap.last + sizeof(HeapHeader) + my_heap.last->size);
     
     //if ((char*)loc > &(my_heap.data) + my_heap.size)
@@ -209,9 +216,8 @@ cat_impl void* cat_memory_alloc(size_t const block_size)
     //    return NULL;
     //}
 
-    //loc = cat_malloc(sizeof(HeapHeader) + block_size);
     ((HeapHeader*)loc)->prev = my_heap.last;
-    ((HeapHeader*)loc)->prev->next = loc;
+    ((HeapHeader*)loc)->prev->next = loc; //sets the last blocks next to the current block being added
     ((HeapHeader*)loc)->next = NULL;
     ((HeapHeader*)loc)->location = loc;
     ((HeapHeader*)loc)->size = block_size;
@@ -225,6 +231,7 @@ cat_impl void* cat_memory_alloc(size_t const block_size)
     return (void*)((char*)loc + sizeof(HeapHeader));
 }
 
+//removes a block from the heap/linked list
 cat_impl bool cat_memory_dealloc(void* const p_block)
 {
     assert_or_bail(p_block) false;

@@ -1,3 +1,6 @@
+//author: liv and victor
+//comments: annabelle
+
 #include "cat_unit_test.h"
 
 float dotProduct(const vec3f v1, const vec3f v2)
@@ -41,17 +44,19 @@ float* componentMult(vec3f v_out, const vec3f v1, const float scalar)
 	return v_out;
 }
 
-
+//helper func to pass vars to specifed function
 float execTest_f_v3f_v3f(test_f_vec3f_vec3f func, const vec3f v1, const vec3f v2)
 {
 	return (*func)(v1, v2);
 }
 
+//helper func to pass vars to specifed function
 float* execTest_fp_v3f_v3f_v3f(test_fp_vec3f_vec3f_vec3f func, vec3f v_out, const vec3f v1, const vec3f v2)
 {
 	return (*func)(v_out, v1, v2);
 }
 
+//helper func to pass vars to specifed function
 float* execTest_fp_v3f_v3f_f(test_fp_vec3f_vec3f_f func, vec3f v_out, const vec3f v1, const float scalar)
 {
 	return (*func)(v_out, v1, scalar);
@@ -62,12 +67,13 @@ void runUnitTests(void)
 	vec3f v_out, v1 = { 1, 0, 0 }, v2 = { 0, 1, 0 };
 	float scalar = 1;
 	
+	//tests dot product
 	float expD = 0;
-
 	test_f_vec3f_vec3f dTest = dotProduct;
 	float dTestResult = ExecTest(dTest, v1, v2);
 	expD == dTestResult ? printf("\nDot test Pass") : printf("\nDot test Fail");
 
+	//tests cross prodcut
 	vec3f expC = { 0, 0, 1 };
 	test_fp_vec3f_vec3f_vec3f cTest = crossProduct;
 	float* cTestResult = ExecTest(cTest, v_out, v1, v2);
@@ -84,6 +90,7 @@ void runUnitTests(void)
 		}
 	}
 
+	//tests projection
 	vec3f expP = { 0, 0, 0 };
 	test_fp_vec3f_vec3f_vec3f pTest = vec3fProj;
 	float* pTestResult = ExecTest(pTest, v_out, v1, v2);
@@ -100,6 +107,7 @@ void runUnitTests(void)
 		}
 	}
 
+	//tests addition
 	vec3f expA = { 1, 1, 0 };
 	test_fp_vec3f_vec3f_vec3f aTest = vec3fAdd;
 	float* aTestResult = ExecTest(aTest, v_out, v1, v2);
@@ -116,6 +124,7 @@ void runUnitTests(void)
 		}
 	}
 
+	//tests scalar * vector
 	vec3f expCM = { 1, 0, 0 };
 	test_fp_vec3f_vec3f_f cmTest = componentMult;
 	float* cmTestResult = ExecTest(cmTest, v_out, v1, scalar);

@@ -1,3 +1,5 @@
+//author: victor and annabelle
+
 #pragma once
 
 #include "cat/cat_platform.h"
@@ -10,7 +12,7 @@ typedef struct
 {
 	int64_t* values;
 	int index;
-	int header;
+	int header; 
 	int footer;
 	int size;
 } RingBuffer;

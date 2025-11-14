@@ -1,9 +1,8 @@
+//author: victor and annabelle
+
 #include "cat_profiler.h"
 #include "cat/utility/cat_time.h"
-#include <math.h>
 
-//extern void cat_platform_time_rate(void);
-//extern void cat_platform_time(void);
 extern void cat_console_clear(void);
 
 void RingBufferInit(RingBuffer* buffer, int size)
@@ -34,6 +33,7 @@ void RingBufferClean(RingBuffer* buffer)
 	free(buffer->values);
 }
 
+//sets a value at the next index
 void RingBufferInsert(RingBuffer* buffer, int64_t value)
 {
 	buffer->values[buffer->index] = value;
@@ -41,6 +41,7 @@ void RingBufferInsert(RingBuffer* buffer, int64_t value)
 	buffer->footer = buffer->footer > buffer->size -1 ? buffer->size : buffer->footer + 1;
 }
 
+//sets all ringbuffer param back to zero
 void RingBufferClear(RingBuffer* buffer)
 {
 	buffer->index = 0;
@@ -52,6 +53,7 @@ void RingBufferClear(RingBuffer* buffer)
 	buffer->footer = 0;
 }
 
+//finds the average of ringbuffer, excludes inital zero values
 double RingBufferAverage(RingBuffer* buffer)
 {
 	if (buffer->footer == 0)
@@ -79,6 +81,7 @@ void RunProfilerTests(void)
 	cat_console_clear();
 	double tps = cat_platform_time_rate();
 
+	//O(log2(n)
 	for (int i = 0; i < timeLooping; i++)
 	{
 		if (&buffer == NULL)
@@ -102,7 +105,7 @@ void RunProfilerTests(void)
 	RingBufferClear(&buffer);
 	lastTick = cat_platform_time();
 
-
+	//O(n)
 	for (int i = 0; i < timeLooping; i++)
 	{
 		if (&buffer == NULL)
@@ -127,7 +130,8 @@ void RunProfilerTests(void)
 	RingBufferClear(&buffer);
 	lastTick = cat_platform_time();
 	
-	for (int k = 0; k < timeLooping; k++)
+	//O(n^2)
+	/*for (int k = 0; k < timeLooping; k++)
 	{
 		if (&buffer == NULL)
 			return;
@@ -147,7 +151,7 @@ void RunProfilerTests(void)
 				unused(j);
 			}
 		}
-	}
+	}*/
 	
 	printf("\n\n-----------------------------------------------------------\n");
 	printf("\nAverage time in seconds of O(log_2(n)) loop: %f \nAverage time in seconds of O(n) loop:%f \nAverage time in seconds of O(n^2) loop: %f", 

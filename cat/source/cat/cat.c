@@ -38,6 +38,6 @@ cat_noinl int cat_test_all(int const argc, char const* const argv[])
     cat_memory_test();
     cat_thread_test();
     runUnitTests();
-    //RunProfilerTests();
+    RunProfilerTests();
     return 0;
 }
